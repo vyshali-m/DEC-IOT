@@ -37,7 +37,7 @@ def collect_device_parameters():
 
     packets_recv, err_in, drop_in = get_network_params()
     data = {
-        "device_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "device_time": datetime.now(),#.strftime("%Y-%m-%d %H:%M:%S"),
         "cpu_usage": get_cpu_usage(),
         "free_memory": get_free_memory(),
         "packets_recv": packets_recv,
