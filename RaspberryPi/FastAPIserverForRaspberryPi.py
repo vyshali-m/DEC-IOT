@@ -32,10 +32,10 @@ async def shutdown_event():
     await app.state.db_pool.close()
 
 class DataRow(BaseModel):
-    device_time: int
-    cpu_usage: int
-    free_memory: int
-    packets_recv: int
+    device_time: str
+    cpu_usage: float
+    free_memory: float
+    packets_recv: float
     err_in: float
     drop_in: float
     cpu_temperature: float
@@ -60,7 +60,7 @@ async def insert_data(batch_data: BatchData):
     ]
 
     query = """
-        INSERT INTO rpi_iot_data (server_timestamp, device_timestamp, cpu_usage, free_memory, packets_recv, err_in, drop_in, cpu_temperature)
+        INSERT INTO rpi_iot_data (timestamp, devicetimestamp, cpusage, freememory, packets_recv, err_in, drop_in, cpu_temperature)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     """
 
@@ -78,3 +78,4 @@ async def insert_data(batch_data: BatchData):
 # uvicorn FastAPIserverForRaspberryPi:app --reload
 
 # ngrok http --domain=grand-grown-swine.ngrok-free.app 8000 --scheme http
+
