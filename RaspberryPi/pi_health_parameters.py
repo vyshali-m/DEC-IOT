@@ -37,7 +37,7 @@ def collect_device_parameters():
 
     packets_recv, err_in, drop_in = get_network_params()
     data = {
-        "device_time": datetime.now(),
+        "device_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "cpu_usage": get_cpu_usage(),
         "free_memory": get_free_memory(),
         "packets_recv": packets_recv,
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         # If we have enough readings, send them to the server
         if len(readings) >= MAX_READINGS:
             print(f"Sending {len(readings)} readings to the server...")
-            print(readings)
+            #print(readings)
             #send_data_to_server(readings)
             readings.clear()  # Clear the list after sending
             

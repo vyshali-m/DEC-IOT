@@ -3,10 +3,11 @@ from pydantic import BaseModel
 import asyncpg
 import logging
 from datetime import datetime
+import json
 
 app = FastAPI()
-#DATABASE_URL = "postgresql://postgres.ljkyfydochapfwaqgghg:Supabase2024$@aws-0-ap-south-1.pooler.supabase.com:6543/postgres"
-# new db
+
+# Database configuration
 DATABASE_URL = "postgresql://postgres.gxvqfyitftgzusocnxvo:Supabase2024$@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
 DATABASE_MIN_CONNECTIONS = 3
 DATABASE_MAX_CONNECTIONS = 10
@@ -30,39 +31,36 @@ async def startup_event():
 async def shutdown_event():
     await app.state.db_pool.close()
 
-@app.post("/endpoint")
-async def insert_data(request: Request):
-    batch_data = await request.json()
-    #print(batch_data)
-    # data_to_insert = [
-    #     (
-    #         row['timestamp'],
-    #         row['freeHeapMemory'],
-    #         row['networkTrafficVolume'],
-    #         row['packetSize'],
-    #         row['responseTime'],
-    #         row['errorRate'],
-    #         row['powerConsumption']
-    #     )
-    #     for row in batch_data["batch data"]
-    # ]
+class DataRow(BaseModel):
+    device_time: int
+    cpu_usage: int
+    free_memory: int
+    packets_recv: int
+    err_in: float
+    drop_in: float
+    cpu_temperature: float
 
+class BatchData(BaseModel):
+    batch_data: list[DataRow]
+
+@app.post("/endpoint")
+async def insert_data(batch_data: BatchData):
     data_to_insert = [
         (
             datetime.now(),
-            row['timestamp'],
-            row['freeHeapMemory'],
-            row['networkTrafficVolume'],
-            row['packetSize'],
-            row['responseTime'],
-            row['errorRate'],
-            row['powerConsumption']
+            row.device_time,
+            row.cpu_usage,
+            row.free_memory,
+            row.packets_recv,
+            row.err_in,
+            row.drop_in,
+            row.cpu_temperature
         )
-        for row in batch_data["batch data"]
+        for row in batch_data.batch_data
     ]
 
     query = """
-        INSERT INTO iot_data (timestamp, device_timestamp, freeHeapMemory, networkTrafficVolume, packetSize, responseTime, errorRate, powerConsumption)
+        INSERT INTO iot_data (server_timestamp, device_timestamp, cpu_usage, free_memory, packets_recv, err_in, drop_in, cpu_temperature)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     """
 
@@ -71,12 +69,10 @@ async def insert_data(request: Request):
             try:
                 await connection.executemany(query, data_to_insert)
                 logger.info("Successfully inserted data")
-                return {"server: successfully inserted your records "}
+                return {"message": "Successfully inserted your records"}
             except Exception as e:
                 logger.error(f"Error inserting data: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
 
-#ngrok http --domain=thoroughly-correct-rooster.ngrok-free.app 8000 --scheme http
-#uvicorn FastAPIserverForArduino:app --reload
-
-#ngrok http --domain=grand-grown-swine.ngrok-free.app 8000 --scheme http
+# Commands to run the server
+# uvicorn filename:app --reload
