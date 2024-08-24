@@ -38,7 +38,7 @@ async def insert_data(request: Request):
     data_to_insert = [
         (
             datetime.now(),
-            row["device_time"],
+            datetime.strptime(row["device_time"], "%Y-%m-%d %H:%M:%S"),
             row["cpu_usage"],
             row["free_memory"],
             row["packets_recv"],
