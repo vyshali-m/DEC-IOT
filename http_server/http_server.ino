@@ -33,13 +33,21 @@ unsigned long lastMillis = 0;
 int requestCount = 0;
 int failedRequests = 0;
 
+// Counters for network traffic tracking
+unsigned long bytesSent = 0;
+unsigned long bytesReceived = 0;
+
 // Function to collect parameters
 int getMemoryUsage() {
   return ESP.getFreeHeap();
 }
 
-int getNetworkTrafficVolume() {
-  return WiFi.RSSI();
+// int getNetworkTrafficVolume() {
+//   return WiFi.RSSI();
+// }
+
+unsigned long getNetworkTrafficVolume() {
+  return bytesSent + bytesReceived;
 }
 
 int getPacketSize() {
@@ -68,6 +76,39 @@ float getPowerConsumption() {
   float voltage = adcValue * (3.3 / 1024.0);
   float current = voltage / 0.185;
   return current;
+}
+
+
+// Function to send data and track the number of bytes sent and received
+// void sendData(const String& jsonData) {
+//   HTTPClient http;
+//   http.begin(wifiClient, serverName);
+//   http.addHeader("Content-Type", "application/json");
+
+//   // Track bytes sent
+//   bytesSent += jsonData.length();
+
+//   int httpResponseCode = http.POST(jsonData);  // Send the data
+
+//   if (httpResponseCode > 0) {
+//     String response = http.getString();
+//     bytesReceived += response.length();  // Track bytes received
+//     Serial.println(jsonData);
+//     Serial.println("Data sent successfully");
+//     Serial.println(response);
+//   } else {
+//     Serial.print("Error sending data: ");
+//     Serial.println(httpResponseCode);
+//     failedRequests++;  // Track failed requests
+//   }
+
+//   http.end();
+// }
+
+// Function to reset network traffic counters
+void resetTrafficCounters() {
+  bytesSent = 0;
+  bytesReceived = 0;
 }
 
 // Log parameters every second
@@ -111,6 +152,8 @@ void logParameters()
       http.begin(wifiClient, serverName);  // Updated API usage
       http.addHeader("Content-Type", "application/json");
 
+      // Track bytes sent
+      bytesSent += jsonData.length();
       int httpResponseCode = http.POST(jsonData); //jsonData
 
       Serial.println(httpResponseCode);
@@ -135,8 +178,13 @@ void logParameters()
 
     // Reset logIndex after sending the data
     logIndex = 0;
+
+    // Reset traffic counters after logging the data
+    resetTrafficCounters();
   }
 }
+
+
 
 // Handle incoming HTTP request and respond
 void handleRoot() {
@@ -145,7 +193,9 @@ void handleRoot() {
 
   unsigned long startTime = millis();  // Start the timer
   // Simulate request processing
-  server.send(200, "text/plain", "Hello from IOT-device-1");
+  String response = "Hello from IOT-device-1";
+  bytesSent += response.length();
+  server.send(200, "text/plain", response);
   unsigned long endTime = millis();  // End the timer
   
   if (endTime - startTime > TIMEOUT_MS) 
@@ -155,8 +205,11 @@ void handleRoot() {
   }
 }
 
-void handleNotFound() {
-  server.send(404, "text/plain", "404: Not Found");
+void handleNotFound() 
+{
+  String response = "404: Not Found";
+  bytesSent += response.length();
+  server.send(404, "text/plain", response);
 }
 
 void setup() {
