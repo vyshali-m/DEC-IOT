@@ -3,7 +3,7 @@ from gpiozero import CPUTemperature
 import requests
 import json
 import time
-
+from datetime import datetime
 # Constants
 MAX_READINGS = 10
 
@@ -37,6 +37,7 @@ def collect_device_parameters():
 
     packets_recv, err_in, drop_in = get_network_params()
     data = {
+        "device_time": datetime.now(),
         "cpu_usage": get_cpu_usage(),
         "free_memory": get_free_memory(),
         "packets_recv": packets_recv,
