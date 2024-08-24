@@ -5,7 +5,7 @@ import json
 import time
 from datetime import datetime
 # Constants
-MAX_READINGS = 10
+MAX_READINGS = 1
 
 # CPU usage percentage
 def get_cpu_usage():

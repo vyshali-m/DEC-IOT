@@ -70,27 +70,27 @@ def update_graphs(n):
     return (
         go.Figure(
             data=[go.Scatter(x=df['devicetimestamp'], y=df['cpusage'], mode='lines', name='cpusage')],
-            layout=go.Layout(title='Free Heap Memory', xaxis_title='devicetimestamp', yaxis_title='cpusage (%)')
+            layout=go.Layout(title='CPU Usage', xaxis_title='devicetimestamp', yaxis_title='cpusage (%)')
         ),
         go.Figure(
             data=[go.Scatter(x=df['devicetimestamp'], y=df['freememory'], mode='lines', name='freememory')],
-            layout=go.Layout(title='Network Traffic Volume', xaxis_title='devicetimestamp', yaxis_title='freememory (%)')
+            layout=go.Layout(title='Free Memory', xaxis_title='devicetimestamp', yaxis_title='freememory (bytes)')
         ),
         go.Figure(
             data=[go.Scatter(x=df['devicetimestamp'], y=df['packetsrecv'], mode='lines', name='packetsrecv')],
-            layout=go.Layout(title='Power Consumption', xaxis_title='devicetimestamp', yaxis_title='packetsrecv (count)')
+            layout=go.Layout(title='Total Packets Received', xaxis_title='devicetimestamp', yaxis_title='packetsrecv (count)')
         ),
         go.Figure(
             data=[go.Scatter(x=df['devicetimestamp'], y=df['errin'], mode='lines', name='errin')],
-            layout=go.Layout(title='Response Time', xaxis_title='devicetimestamp', yaxis_title='errin (count)')
+            layout=go.Layout(title='Err In', xaxis_title='devicetimestamp', yaxis_title='errin (count)')
         ),
         go.Figure(
             data=[go.Scatter(x=df['devicetimestamp'], y=df['dropin'], mode='lines', name='dropin')],
-            layout=go.Layout(title='Error Rate', xaxis_title='devicetimestamp', yaxis_title='dropin (count)')
+            layout=go.Layout(title='Drop In', xaxis_title='devicetimestamp', yaxis_title='dropin (count)')
         ),
         go.Figure(
             data=[go.Scatter(x=df['devicetimestamp'], y=df['cputemperature'], mode='lines', name='Cpu Temperature')],
-            layout=go.Layout(title='Packet Size', xaxis_title='devicetimestamp', yaxis_title='cputemperature (Celsius)')
+            layout=go.Layout(title='CPU Temperature', xaxis_title='devicetimestamp', yaxis_title='cputemperature (Celsius)')
         )
     )
 
