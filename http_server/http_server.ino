@@ -4,12 +4,16 @@
 
 ESP8266WebServer server(80);  // Create a web server on port 80
 
+#define MAX_ENTRIES 1  // Adjust this based on your memory constraints
+
 const char* ssid = "Home_ext";
 const char* password = "9731300951";
+const unsigned long TIMEOUT_MS = 2000;  // Set timeout to 2000 milliseconds (2 seconds)
+
 // FastAPI server details
 const char* serverName = "http://thoroughly-correct-rooster.ngrok-free.app/endpoint";  // Replace with your FastAPI server URL
+
 WiFiClient wifiClient;
-#define MAX_ENTRIES 10  // Adjust this based on your memory constraints
 
 // Structure to hold the parameters
 struct Parameters {
@@ -49,7 +53,7 @@ int getResponseTime() {
   unsigned long startTime = millis();
   // Simulate a request to self to measure response time
   if (!server.client().connected()) {
-    return -1;
+   return -1;
   }
   unsigned long endTime = millis();
   return endTime - startTime;
@@ -121,6 +125,7 @@ void logParameters()
       } else {
         Serial.print("Error sending data: ");
         Serial.println(httpResponseCode);
+
       }
 
       http.end();
@@ -137,7 +142,17 @@ void logParameters()
 void handleRoot() {
   Serial.println("Received a request");
   requestCount++;
+
+  unsigned long startTime = millis();  // Start the timer
+  // Simulate request processing
   server.send(200, "text/plain", "Hello from IOT-device-1");
+  unsigned long endTime = millis();  // End the timer
+  
+  if (endTime - startTime > TIMEOUT_MS) 
+  {
+    Serial.println("Request timed out.");
+    failedRequests++;  // Increment failed requests on timeout
+  }
 }
 
 void handleNotFound() {
