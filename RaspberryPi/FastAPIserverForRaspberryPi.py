@@ -60,7 +60,7 @@ async def insert_data(batch_data: BatchData):
     ]
 
     query = """
-        INSERT INTO iot_data (server_timestamp, device_timestamp, cpu_usage, free_memory, packets_recv, err_in, drop_in, cpu_temperature)
+        INSERT INTO rpi_iot_data (server_timestamp, device_timestamp, cpu_usage, free_memory, packets_recv, err_in, drop_in, cpu_temperature)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     """
 
@@ -75,4 +75,6 @@ async def insert_data(batch_data: BatchData):
                 raise HTTPException(status_code=500, detail=str(e))
 
 # Commands to run the server
-# uvicorn filename:app --reload
+# uvicorn FastAPIserverForRaspberryPi:app --reload
+
+# ngrok http --domain=grand-grown-swine.ngrok-free.app 8000 --scheme http

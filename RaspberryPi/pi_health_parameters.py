@@ -75,7 +75,7 @@ if __name__ == "__main__":
         if len(readings) >= MAX_READINGS:
             print(f"Sending {len(readings)} readings to the server...")
             #print(readings)
-            #send_data_to_server(readings)
+            send_data_to_server(readings)
             readings.clear()  # Clear the list after sending
             
         # Wait for 1 second before the next reading
