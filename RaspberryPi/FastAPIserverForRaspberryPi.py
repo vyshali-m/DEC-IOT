@@ -31,36 +31,26 @@ async def startup_event():
 async def shutdown_event():
     await app.state.db_pool.close()
 
-class DataRow(BaseModel):
-    device_time: str
-    cpu_usage: float
-    free_memory: float
-    packets_recv: float
-    err_in: float
-    drop_in: float
-    cpu_temperature: float
-
-class BatchData(BaseModel):
-    batch_data: list[DataRow]
-
 @app.post("/endpoint")
-async def insert_data(batch_data: BatchData):
+async def insert_data(request: Request):
+    batch_data = await request.json()
+    
     data_to_insert = [
         (
             datetime.now(),
-            row.device_time,
-            row.cpu_usage,
-            row.free_memory,
-            row.packets_recv,
-            row.err_in,
-            row.drop_in,
-            row.cpu_temperature
+            row["device_time"],
+            row["cpu_usage"],
+            row["free_memory"],
+            row["packets_recv"],
+            row["err_in"],
+            row["drop_in"],
+            row["cpu_temperature"]
         )
-        for row in batch_data.batch_data
+        for row in batch_data["batch data"]
     ]
 
     query = """
-        INSERT INTO rpi_iot_data (timestamp, devicetimestamp, cpusage, freememory, packets_recv, err_in, drop_in, cpu_temperature)
+        INSERT INTO rpi_iot_data (timestamp, devicetimestamp, cpusage, freememory, packetsrecv, errin, dropin, cputemperature)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     """
 

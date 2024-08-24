@@ -15,3 +15,18 @@ RACE M-tech thesis
     powerConsumption FLOAT NOT NULL
 );
 ```
+# create table Rpi
+```
+CREATE TABLE rpi_iot_data (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMPTZ NOT NULL,
+    devicetimestamp TIMESTAMPTZ NOT NULL,
+    cpusage FLOAT NOT NULL,
+    freememory FLOAT NOT NULL,
+    packetsrecv FLOAT NOT NULL,
+    errin FLOAT NOT NULL,
+    dropin FLOAT NOT NULL,
+    cputemperature FLOAT NOT NULL
+);
+
+```

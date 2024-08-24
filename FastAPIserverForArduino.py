@@ -79,4 +79,6 @@ async def insert_data(request: Request):
 #ngrok http --domain=thoroughly-correct-rooster.ngrok-free.app 8000 --scheme http
 #uvicorn FastAPIserverForArduino:app --reload
 
+
+# New ngrok
 #ngrok http --domain=grand-grown-swine.ngrok-free.app 8000 --scheme http
