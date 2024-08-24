@@ -49,9 +49,8 @@ def collect_device_parameters():
 
 # Send data via HTTP POST request
 def send_data_to_server(data):
-    url = "https://grand-grown-swine.ngrok-free.app"
+    url = "http://grand-grown-swine.ngrok-free.app/endpoint"
     headers = {"Content-Type": "application/json"}
-    
     payload = {"batch data": data}
 
     try:
