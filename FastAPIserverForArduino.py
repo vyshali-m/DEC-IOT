@@ -77,4 +77,6 @@ async def insert_data(request: Request):
                 raise HTTPException(status_code=500, detail=str(e))
 
 #ngrok http --domain=thoroughly-correct-rooster.ngrok-free.app 8000 --scheme http
-#uvicorn server_to_db_v2:app --reload
+#uvicorn FastAPIserverForArduino:app --reload
+
+#ngrok http --domain=grand-grown-swine.ngrok-free.app 8000 --scheme http

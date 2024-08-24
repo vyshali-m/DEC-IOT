@@ -8,10 +8,10 @@ ESP8266WebServer server(80);  // Create a web server on port 80
 
 const char* ssid = "Home_ext";
 const char* password = "9731300951";
-const unsigned long TIMEOUT_MS = 2000;  // Set timeout to 2000 milliseconds (2 seconds)
+const unsigned long TIMEOUT_MS = 1000;  // Set timeout to 1000 milliseconds (2 seconds)
 
 // FastAPI server details
-const char* serverName = "http://thoroughly-correct-rooster.ngrok-free.app/endpoint";  // Replace with your FastAPI server URL
+const char* serverName = "http://grand-grown-swine.ngrok-free.app/endpoint";  // Replace with your FastAPI server URL
 
 WiFiClient wifiClient;
 
@@ -75,7 +75,7 @@ float getPowerConsumption() {
   int adcValue = analogRead(A0);
   float voltage = adcValue * (3.3 / 1024.0);
   float current = voltage / 0.185;
-  return current;
+  return voltage;
 }
 
 

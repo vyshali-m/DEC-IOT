@@ -77,8 +77,8 @@ def update_graphs(n):
             layout=go.Layout(title='Network Traffic Volume', xaxis_title='timestamp', yaxis_title='Traffic Volume (Bytes)')
         ),
         go.Figure(
-            data=[go.Scatter(x=df['timestamp'], y=df['packetsize'], mode='lines', name='Packet Size')],
-            layout=go.Layout(title='Packet Size', xaxis_title='timestamp', yaxis_title='Packet Size (Bytes)')
+            data=[go.Scatter(x=df['timestamp'], y=df['powerconsumption'], mode='lines', name='Power Consumption')],
+            layout=go.Layout(title='Power Consumption', xaxis_title='timestamp', yaxis_title='Current Consumption (Amperes)')
         ),
         go.Figure(
             data=[go.Scatter(x=df['timestamp'], y=df['responsetime'], mode='lines', name='Response Time')],
@@ -89,8 +89,8 @@ def update_graphs(n):
             layout=go.Layout(title='Error Rate', xaxis_title='timestamp', yaxis_title='Error Rate (%)')
         ),
         go.Figure(
-            data=[go.Scatter(x=df['timestamp'], y=df['powerconsumption'], mode='lines', name='Power Consumption')],
-            layout=go.Layout(title='Power Consumption', xaxis_title='timestamp', yaxis_title='Power Consumption (Watts)')
+            data=[go.Scatter(x=df['timestamp'], y=df['packetsize'], mode='lines', name='Packet Size')],
+            layout=go.Layout(title='Packet Size', xaxis_title='timestamp', yaxis_title='Packet Size (Bytes)')
         )
     )
 
@@ -111,3 +111,5 @@ def update_graphs(n):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
+# python dash_server_timestamp.py
