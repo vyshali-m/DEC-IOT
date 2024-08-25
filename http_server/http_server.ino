@@ -6,7 +6,7 @@ ESP8266WebServer server(80);  // Create a web server on port 80
 
 #define MAX_ENTRIES 1  // Adjust this based on your memory constraints
 
-const char* ssid = "Home_ext";
+const char* ssid = "vivo Y73";
 const char* password = "9731300951";
 const unsigned long TIMEOUT_MS = 1000;  // Set timeout to 1000 milliseconds (2 seconds)
 

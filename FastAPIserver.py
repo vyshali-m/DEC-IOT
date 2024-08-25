@@ -3,15 +3,19 @@ from pydantic import BaseModel
 import asyncpg
 import logging
 from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = FastAPI()
 
 #DATABASE_URL = "postgresql://postgres.ljkyfydochapfwaqgghg:Supabase2024$@aws-0-ap-south-1.pooler.supabase.com:6543/postgres"
+# "postgresql://postgres.gxvqfyitftgzusocnxvo:Supabase2024$@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
 
-# new db
-DATABASE_URL = "postgresql://postgres.gxvqfyitftgzusocnxvo:Supabase2024$@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
-DATABASE_MIN_CONNECTIONS = 3
-DATABASE_MAX_CONNECTIONS = 10
+DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_MIN_CONNECTIONS = os.getenv("DATABASE_MIN_CONNECTIONS")
+DATABASE_MAX_CONNECTIONS = os.getenv("DATABASE_MAX_CONNECTIONS")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

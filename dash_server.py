@@ -6,14 +6,21 @@ import pandas as pd
 #import psycopg2
 from sqlalchemy import create_engine
 from dash.dependencies import Input, Output
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 
 app = dash.Dash(__name__)
 
 # old db
 #DATABASE_URL = "postgresql://postgres.ljkyfydochapfwaqgghg:Supabase2024$@aws-0-ap-south-1.pooler.supabase.com:6543/postgres"
 
+DATABASE_URL = os.getenv("DATABASE_URL")
+
 # new db
-DATABASE_URL = "postgresql://postgres.gxvqfyitftgzusocnxvo:Supabase2024$@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
+# DATABASE_URL = "postgresql://postgres.gxvqfyitftgzusocnxvo:Supabase2024$@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
 
 # Create a connection pool
 engine = create_engine(DATABASE_URL)
