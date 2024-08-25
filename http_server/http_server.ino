@@ -75,7 +75,7 @@ float getPowerConsumption() {
   int adcValue = analogRead(A0);
   float voltage = adcValue * (3.3 / 1024.0);
   float current = voltage / 0.185;
-  return voltage;
+  return current;
 }
 
 
@@ -157,8 +157,8 @@ void logParameters()
       int httpResponseCode = http.POST(jsonData); //jsonData
 
       Serial.println(httpResponseCode);
-      Serial.println("Server Name:");
-      Serial.println(serverName);
+      //Serial.println("Server Name:");
+      //Serial.println(serverName);
 
       if (httpResponseCode > 0) {
         String response = http.getString();  // Get the response payload

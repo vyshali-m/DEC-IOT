@@ -9,7 +9,12 @@ from dash.dependencies import Input, Output
 
 app = dash.Dash(__name__)
 
+# old db
+#DATABASE_URL = "postgresql://postgres.ljkyfydochapfwaqgghg:Supabase2024$@aws-0-ap-south-1.pooler.supabase.com:6543/postgres"
+
+# new db
 DATABASE_URL = "postgresql://postgres.gxvqfyitftgzusocnxvo:Supabase2024$@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
+
 # Create a connection pool
 engine = create_engine(DATABASE_URL)
 

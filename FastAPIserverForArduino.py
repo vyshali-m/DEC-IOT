@@ -5,7 +5,9 @@ import logging
 from datetime import datetime
 
 app = FastAPI()
+
 #DATABASE_URL = "postgresql://postgres.ljkyfydochapfwaqgghg:Supabase2024$@aws-0-ap-south-1.pooler.supabase.com:6543/postgres"
+
 # new db
 DATABASE_URL = "postgresql://postgres.gxvqfyitftgzusocnxvo:Supabase2024$@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
 DATABASE_MIN_CONNECTIONS = 3
