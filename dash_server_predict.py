@@ -3,11 +3,14 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 import pandas as pd
-#import psycopg2
+
 from sqlalchemy import create_engine
 from dash.dependencies import Input, Output
 from dotenv import load_dotenv
 import os
+
+import pickle
+import joblib
 
 load_dotenv()
 
@@ -16,11 +19,19 @@ app = dash.Dash(__name__)
 
 # old db
 #DATABASE_URL = "postgresql://postgres.ljkyfydochapfwaqgghg:Supabase2024$@aws-0-ap-south-1.pooler.supabase.com:6543/postgres"
+# new db
+# DATABASE_URL = "postgresql://postgres.gxvqfyitftgzusocnxvo:Supabase2024$@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
+
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# new db
-# DATABASE_URL = "postgresql://postgres.gxvqfyitftgzusocnxvo:Supabase2024$@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
+# Load the trained logistic regression model
+with open('logistic_regression_model.pkl', 'rb') as file:
+    logreg = pickle.load(file)
+
+# Load the scaler
+with open('scaler.pkl', 'rb') as file:
+    scaler = pickle.load(file)
 
 # Create a connection pool
 engine = create_engine(DATABASE_URL)
@@ -65,6 +76,11 @@ app.layout = html.Div([
         html.Div(dcc.Graph(id='response-time'), style={'width': '33%', 'display': 'inline-block'}),
         html.Div(dcc.Graph(id='error-rate'), style={'width': '33%', 'display': 'inline-block'}),
         html.Div(dcc.Graph(id='power-consumption'), style={'width': '33%', 'display': 'inline-block'}),
+    ], style={'display': 'flex'}),
+    html.Div([
+        html.Div(dcc.Graph(id='cpu-frequency'), style={'width': '33%', 'display': 'inline-block'}),
+        html.Div(dcc.Graph(id='heap-fragmentation'), style={'width': '33%', 'display': 'inline-block'}),
+        html.Div(dcc.Graph(id='attack-prediction'), style={'width': '33%', 'display': 'inline-block'}),
     ], style={'display': 'flex'})
 ])
 
@@ -74,11 +90,26 @@ app.layout = html.Div([
      Output('packet-size', 'figure'),
      Output('response-time', 'figure'),
      Output('error-rate', 'figure'),
-     Output('power-consumption', 'figure')],
+     Output('power-consumption', 'figure'),
+     Output('attack-prediction', 'figure'),
+     Output('cpu-frequency', 'figure'),
+     Output('heap-fragmentation', 'figure')],
     [Input('interval-component', 'n_intervals')]
 )
 def update_graphs(n):
     df = get_data()
+
+    # Ensure the features are in the correct order and select only the necessary columns
+    feature_columns = ['responsetime', 'freeheapmemory', 'powerconsumption']
+    df_features = df[feature_columns]
+
+    # Transform the new data using the loaded scaler
+    df_scaled = scaler.transform(df_features)
+
+    # Prediction column addition
+    prediction = logreg.predict(df_scaled)
+    df['attack_prediction'] = prediction
+
     return (
         go.Figure(
             data=[go.Scatter(x=df['timestamp'], y=df['freeheapmemory'], mode='lines', name='Free Heap Memory')],
@@ -103,6 +134,18 @@ def update_graphs(n):
         go.Figure(
             data=[go.Scatter(x=df['timestamp'], y=df['packetsize'], mode='lines', name='Packet Size')],
             layout=go.Layout(title='Packet Size', xaxis_title='timestamp', yaxis_title='Packet Size (Bytes)')
+        ),
+        go.Figure(
+            data=[go.Scatter(x=df['timestamp'], y=df['cpufrequency'], mode='lines', name='CPU Frequency')],
+            layout=go.Layout(title='CPU Frequency', xaxis_title='timestamp', yaxis_title='Frequncy (MHz)')
+        ),
+        go.Figure(
+            data=[go.Scatter(x=df['timestamp'], y=df['heapfragmentation'], mode='lines', name='Heap Fragmentation')],
+            layout=go.Layout(title='Heap Fragmentation', xaxis_title='timestamp', yaxis_title='Fragments count')
+        ),
+        go.Figure(
+            data=[go.Scatter(x=df['timestamp'], y=df['attack_prediction'], mode='lines', name='Attack Prediction')],
+            layout=go.Layout(title='Attack Prediction (1=Attack, 0=Normal)', xaxis_title='timestamp', yaxis_title='Prediction')
         )
     )
 

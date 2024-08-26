@@ -6,7 +6,7 @@ ESP8266WebServer server(80);  // Create a web server on port 80
 
 #define MAX_ENTRIES 1  // Adjust this based on your memory constraints
 
-const char* ssid = "vivo Y73";
+const char* ssid = "Home_ext";
 const char* password = "9731300951";
 const unsigned long TIMEOUT_MS = 1000;  // Set timeout to 1000 milliseconds (2 seconds)
 
@@ -24,6 +24,8 @@ struct Parameters {
   int responseTime;
   float errorRate;
   float powerConsumption;
+  int cpufrequency;
+  int heapfragmentation;
 };
 
 Parameters dataLog[MAX_ENTRIES];
@@ -37,14 +39,20 @@ int failedRequests = 0;
 unsigned long bytesSent = 0;
 unsigned long bytesReceived = 0;
 
+int getCPUFrequency() {
+  return ESP.getCpuFreqMHz();  // Returns the CPU frequency in MHz
+}
+
+int getHeapFragmentation() {
+  return ESP.getHeapFragmentation();  // Returns heap fragmentation in percentage
+}
+
+
 // Function to collect parameters
 int getMemoryUsage() {
   return ESP.getFreeHeap();
 }
 
-// int getNetworkTrafficVolume() {
-//   return WiFi.RSSI();
-// }
 
 unsigned long getNetworkTrafficVolume() {
   return bytesSent + bytesReceived;
@@ -56,6 +64,7 @@ int getPacketSize() {
   }
   return 0;
 }
+
 
 int getResponseTime() {
   unsigned long startTime = millis();
@@ -122,6 +131,8 @@ void logParameters()
     dataLog[logIndex].responseTime = getResponseTime();
     dataLog[logIndex].errorRate = getErrorRate();
     dataLog[logIndex].powerConsumption = getPowerConsumption();
+    dataLog[logIndex].cpufrequency = getCPUFrequency();
+    dataLog[logIndex].heapfragmentation = getHeapFragmentation();
     logIndex++;
   }
 
@@ -137,7 +148,10 @@ void logParameters()
       jsonData += "\"packetSize\": " + String(dataLog[i].packetSize) + ",";
       jsonData += "\"responseTime\": " + String(dataLog[i].responseTime) + ",";
       jsonData += "\"errorRate\": " + String(dataLog[i].errorRate) + ",";
-      jsonData += "\"powerConsumption\": " + String(dataLog[i].powerConsumption);
+      jsonData += "\"powerConsumption\": " + String(dataLog[i].powerConsumption) + ",";
+      jsonData += "\"cpufrequency\": " + String(dataLog[i].cpufrequency) + ",";
+      jsonData += "\"heapfragmentation\": " + String(dataLog[i].heapfragmentation);
+      
       jsonData += "}";
       if (i < MAX_ENTRIES - 1) {
         jsonData += ",";
@@ -155,16 +169,18 @@ void logParameters()
       // Track bytes sent
       bytesSent += jsonData.length();
       int httpResponseCode = http.POST(jsonData); //jsonData
-
-      Serial.println(httpResponseCode);
+      // Print the device IP address
+      //Serial.print("IP Address: ");
+      //Serial.println(WiFi.localIP());
+      //Serial.println(httpResponseCode);
       //Serial.println("Server Name:");
       //Serial.println(serverName);
 
       if (httpResponseCode > 0) {
         String response = http.getString();  // Get the response payload
         Serial.println(jsonData);
-        Serial.println("Data sent successfully");
-        Serial.println(response);
+        //Serial.println("Data sent successfully");
+        //Serial.println(response);
       } else {
         Serial.print("Error sending data: ");
         Serial.println(httpResponseCode);
@@ -185,6 +201,12 @@ void logParameters()
 }
 
 
+void handlePost() {
+    requestCount++;
+    String postData = server.arg("plain"); // Get POST data
+    server.send(200, "text/plain", "POST request received");
+    Serial.println("Received a POST request");
+}
 
 // Handle incoming HTTP request and respond
 void handleRoot() {

@@ -14,8 +14,8 @@ app = FastAPI()
 # "postgresql://postgres.gxvqfyitftgzusocnxvo:Supabase2024$@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
 
 DATABASE_URL = os.getenv("DATABASE_URL")
-DATABASE_MIN_CONNECTIONS = os.getenv("DATABASE_MIN_CONNECTIONS")
-DATABASE_MAX_CONNECTIONS = os.getenv("DATABASE_MAX_CONNECTIONS")
+DATABASE_MIN_CONNECTIONS = int(os.getenv("DATABASE_MIN_CONNECTIONS"))
+DATABASE_MAX_CONNECTIONS = int(os.getenv("DATABASE_MAX_CONNECTIONS"))
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -62,14 +62,17 @@ async def insert_data(request: Request):
             row['packetSize'],
             row['responseTime'],
             row['errorRate'],
-            row['powerConsumption']
+            row['powerConsumption'],
+            row['cpufrequency'],
+            row['heapfragmentation'],
+            
         )
         for row in batch_data["batch data"]
     ]
 
     query = """
-        INSERT INTO iot_data (timestamp, device_timestamp, freeHeapMemory, networkTrafficVolume, packetSize, responseTime, errorRate, powerConsumption)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        INSERT INTO iot_data (timestamp, device_timestamp, freeHeapMemory, networkTrafficVolume, packetSize, responseTime, errorRate, powerConsumption, cpufrequency, heapfragmentation)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
     """
 
     async with app.state.db_pool.acquire() as connection:
@@ -83,7 +86,7 @@ async def insert_data(request: Request):
                 raise HTTPException(status_code=500, detail=str(e))
 
 #ngrok http --domain=thoroughly-correct-rooster.ngrok-free.app 8000 --scheme http
-#uvicorn FastAPIserverForArduino:app --reload
+#uvicorn FastAPIserver:app --reload
 
 
 # New ngrok
