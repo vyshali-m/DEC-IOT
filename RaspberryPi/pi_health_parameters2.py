@@ -1,6 +1,7 @@
 import psutil
 import subprocess
 import os
+import shutil
 
 def get_cpu_usage():
     return psutil.cpu_percent(interval=1)
